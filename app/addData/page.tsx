@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useAppDispatch } from "../hooks/hook";
 import { addTodoToFirestore } from "../redux/slice";
 
@@ -9,14 +9,15 @@ export default function AddData() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ firstName, lastName, email });
-    let data = {
+
+    const data = {
       firstName,
       lastName,
       email,
     };
+
     dispatch(addTodoToFirestore(data));
     setFirstName("");
     setLastName("");
@@ -26,15 +27,10 @@ export default function AddData() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800">
-          User Form
-        </h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">User Form</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="firstName"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
               First Name
             </label>
             <input
@@ -47,10 +43,7 @@ export default function AddData() {
             />
           </div>
           <div>
-            <label
-              htmlFor="lastName"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
               Last Name
             </label>
             <input
@@ -63,10 +56,7 @@ export default function AddData() {
             />
           </div>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
               Email
             </label>
             <input

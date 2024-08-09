@@ -4,16 +4,13 @@ import { useAppDispatch, useAppSelector } from "../hooks/hook";
 import { deleteData, fetchData } from "../redux/slice";
 
 export default function ViewData() {
-  // Selector to get todo data from Redux store
   const data = useAppSelector((state) => state.Todo.todo);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    // Dispatch fetchData action to get data on component mount
     dispatch(fetchData());
-  }, [dispatch]); // Include dispatch in the dependency array to avoid warnings
+  }, [dispatch]);
 
-  // Handle delete action
   const handleDelete = (id: string) => {
     dispatch(deleteData(id));
   };

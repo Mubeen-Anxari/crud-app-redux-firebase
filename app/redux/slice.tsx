@@ -10,25 +10,28 @@ import {
 import db from "../firebase/firebaseConfig";
 import { create } from "domain";
 
+// In your redux slice file
+
 interface TodoType {
-  id: string;
+  id: string;  // Mark id as optional for creation
   firstName: string;
   lastName: string;
   email: string;
 }
 
-export const addTodoToFirestore = createAsyncThunk<TodoType, TodoType>(
+export const addTodoToFirestore = createAsyncThunk<TodoType, Omit<TodoType, 'id'>>(
   "data/addTodoToFirestore",
   async (data) => {
     try {
-      const addTodoRef = await addDoc(collection(db, "data"), data);
-      return { ...data, id: addTodoRef.id };
+      const addTodoRef = await addDoc(collection(db, "Data"), data);
+      return { ...data, id: addTodoRef.id }; // Add the id to the returned object
     } catch (error) {
       console.error("Failed to add todo:", error);
       throw error;
     }
   }
 );
+
 export const fetchData = createAsyncThunk<TodoType[]>(
   "data/fetchData",
   async () => {
