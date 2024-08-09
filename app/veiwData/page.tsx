@@ -1,0 +1,56 @@
+"use client";
+import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../hooks/hook";
+import { deleteData, fetchData } from "../redux/slice";
+
+export default function ViewData() {
+  // Selector to get todo data from Redux store
+  const data = useAppSelector((state) => state.Todo.todo);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    // Dispatch fetchData action to get data on component mount
+    dispatch(fetchData());
+  }, [dispatch]); // Include dispatch in the dependency array to avoid warnings
+
+  // Handle delete action
+  const handleDelete = (id: string) => {
+    dispatch(deleteData(id));
+  };
+
+  return (
+    <div className="p-4 bg-gray-800 min-h-screen">
+      <div className="max-w-4xl mx-auto">
+        {data.length > 0 ? (
+          data.map((item) => (
+            <div
+              key={item.id}
+              className="flex justify-between bg-white p-4 mb-4 rounded shadow"
+            >
+              <div className="flex flex-col">
+                <h1 className="text-lg font-bold text-gray-900">
+                  {item.firstName}
+                </h1>
+                <h2 className="text-md text-gray-700">{item.lastName}</h2>
+                <h3 className="text-sm text-gray-500">{item.email}</h3>
+              </div>
+              <div className="mt-5 gap-2 flex">
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="bg-red-700 text-white p-2 rounded-xl hover:bg-red-800 transition"
+                >
+                  Delete
+                </button>
+                <button className="bg-purple-700 text-white p-2 rounded-xl hover:bg-purple-800 transition">
+                  Update
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <h1 className="text-white text-center">No data found</h1>
+        )}
+      </div>
+    </div>
+  );
+}
