@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/hook";
 import { deleteAllData, deleteData, fetchData } from "../redux/slice";
 
-export default function ViewData({handleEditIcon,cancelUpdate}:any) {
+export default function ViewData({ handleEditIcon }: any) {
   const data = useAppSelector((state) => state.Todo.todo);
   const dispatch = useAppDispatch();
 
@@ -16,7 +16,7 @@ export default function ViewData({handleEditIcon,cancelUpdate}:any) {
   };
 
   const handleDeleteAll = () => {
-    dispatch(deleteAllData())
+    dispatch(deleteAllData());
   };
 
   return (
@@ -43,7 +43,12 @@ export default function ViewData({handleEditIcon,cancelUpdate}:any) {
                   >
                     Delete
                   </button>
-                  <button onClick={()=>{handleEditIcon(item)}} className="bg-purple-700 text-white p-2 rounded-xl hover:bg-purple-800 transition">
+                  <button
+                    onClick={() => {
+                      handleEditIcon(item);
+                    }}
+                    className="bg-purple-700 text-white p-2 rounded-xl hover:bg-purple-800 transition"
+                  >
                     Update
                   </button>
                 </div>

@@ -8,7 +8,6 @@ export default function AddData({ bookToEdit }: any) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  //Update states
   const [editedFirstName, setEditedFirstName] = useState("");
   const [editedLastName, setEditedLastName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
@@ -36,11 +35,12 @@ export default function AddData({ bookToEdit }: any) {
 
   const handleUpdateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!bookToEdit) {
+  
+    if (!bookToEdit || !bookToEdit.id) {
+      console.error("Book to edit or its ID is not available");
       return;
     }
-
+  
     const data = {
       id: bookToEdit.id,
       data: {
@@ -49,10 +49,7 @@ export default function AddData({ bookToEdit }: any) {
         email: editedEmail,
       },
     };
-    setEditedFirstName("");
-    setEditedLastName("");
-    setEditedEmail("");
-
+  
     dispatch(updateData(data));
   };
   return (

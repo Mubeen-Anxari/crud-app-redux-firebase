@@ -11,7 +11,7 @@ import {
 import db from "../firebase/firebaseConfig";
 
 interface TodoType {
-  id?: string; // id is optional for creation
+  id: string; // id is optional for creation
   firstName: string;
   lastName: string;
   email: string;
@@ -72,18 +72,21 @@ export const deleteAllData = createAsyncThunk<void>(
 );
 
 export const updateData = createAsyncThunk<
-  TodoType,
+  TodoType, 
   { id: string; data: Partial<TodoType> }
->("data/updateData", async ({ id, data }) => {
-  try {
+>(
+  'data/updateData', 
+  async ({ id, data }) => {
+    if (!id) {
+      throw new Error("Document ID is required");
+    }
+    
     const docRef = doc(db, "data", id);
     await updateDoc(docRef, data);
+    
     return { id, ...data } as TodoType;
-  } catch (error) {
-    console.error("Failed to update document:", error);
-    throw error;
   }
-});
+);
 
 interface CounterState {
   todo: TodoType[];
