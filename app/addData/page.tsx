@@ -27,7 +27,7 @@ export default function AddData() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-4 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center text-gray-800">User Form</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-800">Add Data</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
@@ -72,7 +72,7 @@ export default function AddData() {
             type="submit"
             className="w-full px-4 py-2 mt-4 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            Submit
+            Add
           </button>
         </form>
       </div>
