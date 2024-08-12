@@ -6,14 +6,12 @@ import {
   doc,
   getDoc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
 import db from "../firebase/firebaseConfig";
-import { create } from "domain";
-
-// In your redux slice file
 
 interface TodoType {
-  id: string; // Mark id as optional for creation
+  id?: string; // id is optional for creation
   firstName: string;
   lastName: string;
   email: string;
@@ -24,7 +22,7 @@ export const addTodoToFirestore = createAsyncThunk<
   Omit<TodoType, "id">
 >("data/addTodoToFirestore", async (data) => {
   try {
-    const addTodoRef = await addDoc(collection(db, "Data"), data);
+    const addTodoRef = await addDoc(collection(db, "data"), data);
     return { ...data, id: addTodoRef.id }; // Add the id to the returned object
   } catch (error) {
     console.error("Failed to add todo:", error);
@@ -48,31 +46,45 @@ export const fetchData = createAsyncThunk<TodoType[]>(
     }
   }
 );
+
 export const deleteData = createAsyncThunk<void, string>(
   "data/deleteData",
   async (id, { rejectWithValue }) => {
     try {
-      // Reference the document to be deleted
-      const docRef = doc(db, "Data", id);
-
-      // Perform the deletion
+      const docRef = doc(db, "data", id);
       await deleteDoc(docRef);
     } catch (error) {
-      // Log the error and return a rejected value for error handling
       console.error("Failed to delete document:", error);
       return rejectWithValue(error);
     }
   }
 );
-export const deleteAllData=createAsyncThunk(
-  "data/deleteAllData",async()=>{
-const datas=await getDocs(collection(db,"data"))
-for(var snap of datas.docs){
-  await deleteDoc(doc(db,"data",snap.id))
-}
-return []
+
+export const deleteAllData = createAsyncThunk<void>(
+  "data/deleteAllData",
+  async () => {
+    const querySnapshot = await getDocs(collection(db, "data"));
+    const deletePromises = querySnapshot.docs.map((doc) =>
+      deleteDoc(doc.ref)
+    );
+    await Promise.all(deletePromises);
   }
-)
+);
+
+export const updateData = createAsyncThunk<
+  TodoType,
+  { id: string; data: Partial<TodoType> }
+>("data/updateData", async ({ id, data }) => {
+  try {
+    const docRef = doc(db, "data", id);
+    await updateDoc(docRef, data);
+    return { id, ...data } as TodoType;
+  } catch (error) {
+    console.error("Failed to update document:", error);
+    throw error;
+  }
+});
+
 interface CounterState {
   todo: TodoType[];
 }
@@ -95,12 +107,16 @@ export const counterSlice = createSlice({
     builder.addCase(deleteData.fulfilled, (state, action) => {
       state.todo = state.todo.filter((item) => item.id !== action.meta.arg);
     });
-    builder.addCase(deleteAllData.fulfilled, (state, action) => {
-      state.todo = action.payload;
+    builder.addCase(deleteAllData.fulfilled, (state) => {
+      state.todo = [];
+    });
+    builder.addCase(updateData.fulfilled, (state, action) => {
+      const index = state.todo.findIndex((item) => item.id === action.payload.id);
+      if (index !== -1) {
+        state.todo[index] = action.payload;
+      }
     });
   },
 });
-
-export const {} = counterSlice.actions;
 
 export default counterSlice.reducer;
