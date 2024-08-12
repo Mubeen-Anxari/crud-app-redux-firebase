@@ -13,24 +13,24 @@ import { create } from "domain";
 // In your redux slice file
 
 interface TodoType {
-  id: string;  // Mark id as optional for creation
+  id: string; // Mark id as optional for creation
   firstName: string;
   lastName: string;
   email: string;
 }
 
-export const addTodoToFirestore = createAsyncThunk<TodoType, Omit<TodoType, 'id'>>(
-  "data/addTodoToFirestore",
-  async (data) => {
-    try {
-      const addTodoRef = await addDoc(collection(db, "Data"), data);
-      return { ...data, id: addTodoRef.id }; // Add the id to the returned object
-    } catch (error) {
-      console.error("Failed to add todo:", error);
-      throw error;
-    }
+export const addTodoToFirestore = createAsyncThunk<
+  TodoType,
+  Omit<TodoType, "id">
+>("data/addTodoToFirestore", async (data) => {
+  try {
+    const addTodoRef = await addDoc(collection(db, "Data"), data);
+    return { ...data, id: addTodoRef.id }; // Add the id to the returned object
+  } catch (error) {
+    console.error("Failed to add todo:", error);
+    throw error;
   }
-);
+});
 
 export const fetchData = createAsyncThunk<TodoType[]>(
   "data/fetchData",
@@ -64,6 +64,15 @@ export const deleteData = createAsyncThunk<void, string>(
     }
   }
 );
+export const deleteAllData=createAsyncThunk(
+  "data/deleteAllData",async()=>{
+const datas=await getDocs(collection(db,"data"))
+for(var snap of datas.docs){
+  await deleteDoc(doc(db,"data",snap.id))
+}
+return []
+  }
+)
 interface CounterState {
   todo: TodoType[];
 }
@@ -75,7 +84,7 @@ const initialState: CounterState = {
 export const counterSlice = createSlice({
   name: "Todo",
   initialState,
-  reducers: {}, 
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(addTodoToFirestore.fulfilled, (state, action) => {
       state.todo.push(action.payload);
@@ -84,8 +93,11 @@ export const counterSlice = createSlice({
       state.todo = action.payload;
     });
     builder.addCase(deleteData.fulfilled, (state, action) => {
-      state.todo = state.todo.filter((item) => item.id !== action.meta.arg)
-    })
+      state.todo = state.todo.filter((item) => item.id !== action.meta.arg);
+    });
+    builder.addCase(deleteAllData.fulfilled, (state, action) => {
+      state.todo = action.payload;
+    });
   },
 });
 
